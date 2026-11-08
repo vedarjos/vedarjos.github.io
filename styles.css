@@ -549,6 +549,22 @@ h1 span {
 /* ---------- Apricot & Sky ---------- */
 html, body { background: var(--field); color: var(--ink); }
 
+/* iOS: content scrolls under the clock, which reads as a broken header.
+   Mask the status-bar strip with the field colour so cards slide beneath it
+   instead of colliding with it. env() is 0 on desktop, so this costs nothing
+   in the browser. */
+@supports (padding: max(0px)) {
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: env(safe-area-inset-top);
+    background: var(--field);
+    z-index: 30;
+    pointer-events: none;
+  }
+}
+
 .live { background: var(--apricot); color: var(--ink); border-color: rgba(113,80,47,.2); }
 .pulse { background: var(--oxblood); box-shadow: 0 0 0 0 rgba(130,36,31,.5); animation: pulse 2.4s infinite; }
 @keyframes pulse {
@@ -689,3 +705,26 @@ h1 span {
   white-space: normal; overflow: visible; text-overflow: clip;
   font-size: 13px; line-height: 1.5;
 }
+
+/* Pharmacies that publish no price at the selected dose.
+   They are listed, not hidden — the gap belongs to them, not to the index. */
+.card.missing-dose {
+  background: rgba(143, 160, 113, .16);
+  border: 1px dashed rgba(84, 112, 118, .34);
+}
+.card.missing-dose .card-name { color: var(--ink-soft); }
+.card.missing-dose .rank { opacity: .4; }
+
+.dose-gap {
+  margin: 24px 0 10px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(84, 112, 118, .22);
+}
+.dose-gap-title {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--ink);
+}
+.dose-gap .fine { margin: 0 0 14px; }

@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-30T20:55:09+00:00",
+ "generated_at": "2026-11-08T19:01:41+00:00",
  "method": "Prices read directly from each pharmacy's own Mounjaro page by a headless-Chromium crawler. Every row keeps the exact page and the time it was read. No aggregator database is copied.",
  "attribution": "Discount codes and delivery terms shown only where the pharmacy states them on the page we read. Checkout is the final word.",
  "doses": [
@@ -51,7 +51,7 @@
    "doses_found": 4,
    "confidence": "high",
    "note": "dropped implausible dose(s): 15mg",
-   "reason": "price fell as dose rose \u2014 one or more doses discarded"
+   "reason": "price fell as dose rose — one or more doses discarded"
   },
   {
    "provider": "The Care Pharmacy",
@@ -79,14 +79,16 @@
     "5": 149.99,
     "7.5": 177.99,
     "10": 197.99,
+    "12.5": 211.99,
     "15": 228.99
    },
    "source_url": "https://www.iqdoctor.co.uk/treatments/weight-loss/mounjaro-tirzepatide-injection",
-   "retrieved_at": "2026-10-30T19:45:26+00:00",
-   "doses_found": 5,
+   "retrieved_at": "2026-11-08T19:01:17+00:00",
+   "doses_found": 6,
    "confidence": "high",
    "note": "dropped implausible dose(s): 12.5mg",
-   "reason": "price fell as dose rose \u2014 one or more doses discarded"
+   "reason": "price fell as dose rose — one or more doses discarded",
+   "checks": 6
   },
   {
    "provider": "Medicine Marketplace",
@@ -145,15 +147,17 @@
    "domain": "medy.uk",
    "prices_gbp": {
     "2.5": 126.0,
+    "5": 149.0,
     "7.5": 199.0,
     "10": 224.0,
     "12.5": 241.0,
     "15": 261.0
    },
    "source_url": "https://www.medy.uk/weight-loss-treatments",
-   "retrieved_at": "2026-10-30T19:45:26+00:00",
-   "doses_found": 5,
-   "confidence": "high"
+   "retrieved_at": "2026-11-08T19:01:17+00:00",
+   "doses_found": 6,
+   "confidence": "high",
+   "checks": 6
   },
   {
    "provider": "Cured Pharmacy",
@@ -243,15 +247,17 @@
    "domain": "drweightmans.com",
    "prices_gbp": {
     "2.5": 145.0,
+    "5": 160.0,
     "7.5": 214.0,
     "10": 235.0,
     "12.5": 255.0,
     "15": 280.0
    },
    "source_url": "https://drweightmans.com/product/mounjaro",
-   "retrieved_at": "2026-10-29T16:42:08+00:00",
-   "doses_found": 5,
-   "confidence": "high"
+   "retrieved_at": "2026-11-08T19:01:19+00:00",
+   "doses_found": 6,
+   "confidence": "high",
+   "checks": 6
   },
   {
    "provider": "Allerton",
@@ -394,15 +400,17 @@
     "2.5": 164.99,
     "5": 178.99,
     "7.5": 234.99,
+    "10": 258.99,
     "12.5": 278.99,
     "15": 293.99
    },
    "source_url": "https://www.thefamilychemist.co.uk/mounjaro",
-   "retrieved_at": "2026-10-25T19:23:17+00:00",
-   "doses_found": 5,
+   "retrieved_at": "2026-11-08T19:01:21+00:00",
+   "doses_found": 6,
    "confidence": "high",
    "note": "dropped implausible dose(s): 10mg",
-   "reason": "price fell as dose rose \u2014 one or more doses discarded"
+   "reason": "price fell as dose rose — one or more doses discarded",
+   "checks": 6
   },
   {
    "provider": "Pharmacy Advance",
@@ -494,17 +502,19 @@
    "domain": "www.chemist-4-u.com",
    "prices_gbp": {
     "2.5": 148.0,
+    "5": 188.0,
     "7.5": 248.0,
     "10": 278.0,
     "12.5": 288.0,
     "15": 298.0
    },
    "source_url": "https://www.chemist-4-u.com/weight-loss/weight-loss-injections",
-   "retrieved_at": "2026-10-30T19:45:26+00:00",
-   "doses_found": 5,
+   "retrieved_at": "2026-11-08T19:01:22+00:00",
+   "doses_found": 6,
    "confidence": "high",
    "note": "dropped implausible dose(s): 5mg",
-   "reason": "price fell as dose rose \u2014 one or more doses discarded"
+   "reason": "price fell as dose rose — one or more doses discarded",
+   "checks": 6
   },
   {
    "provider": "Oxford Online Pharmacy",
@@ -719,14 +729,16 @@
     "5": 199.99,
     "7.5": 259.99,
     "10": 279.99,
-    "12.5": 299.99
+    "12.5": 299.99,
+    "15": 319.99
    },
    "source_url": "https://simpleonlinepharmacy.co.uk/weight-loss/mounjaro",
-   "retrieved_at": "2026-10-29T16:42:08+00:00",
-   "doses_found": 5,
+   "retrieved_at": "2026-11-08T19:01:23+00:00",
+   "doses_found": 6,
    "confidence": "high",
    "note": "dropped implausible dose(s): 15mg",
-   "reason": "price fell as dose rose \u2014 one or more doses discarded"
+   "reason": "price fell as dose rose — one or more doses discarded",
+   "checks": 6
   },
   {
    "provider": "Trim",
@@ -761,7 +773,7 @@
    "doses_found": 5,
    "confidence": "high",
    "note": "dropped implausible dose(s): 15mg",
-   "reason": "price fell as dose rose \u2014 one or more doses discarded"
+   "reason": "price fell as dose rose — one or more doses discarded"
   },
   {
    "provider": "Envigore",
@@ -813,19 +825,25 @@
    "doses_found": 5,
    "confidence": "high",
    "note": "dropped implausible dose(s): 15mg",
-   "reason": "price fell as dose rose \u2014 one or more doses discarded"
+   "reason": "price fell as dose rose — one or more doses discarded"
   },
   {
    "provider": "Ashcroft Pharmacy",
    "gphc": "9012896",
    "domain": "ashcroftpharmacy.co.uk",
    "prices_gbp": {
-    "2.5": 149.99
+    "2.5": 149.99,
+    "5": 164.99,
+    "7.5": 224.99,
+    "10": 249.99,
+    "12.5": 269.99,
+    "15": 284.99
    },
    "source_url": "https://www.ashcroftpharmacy.co.uk/online-doctor/weight-loss/weight-loss-mounjaro",
-   "retrieved_at": "2026-10-25T19:20:52+00:00",
-   "doses_found": 1,
-   "confidence": "medium"
+   "retrieved_at": "2026-11-08T19:01:25+00:00",
+   "doses_found": 6,
+   "confidence": "high",
+   "checks": 6
   },
   {
    "provider": "Bolt Pharmacy",
@@ -856,12 +874,18 @@
    "gphc": "",
    "domain": "getweightloss.co.uk",
    "prices_gbp": {
-    "2.5": 133.99
+    "2.5": 133.99,
+    "5": 160.0,
+    "7.5": 208.5,
+    "10": 238.47,
+    "12.5": 247.98,
+    "15": 269.0
    },
    "source_url": "https://getweightloss.co.uk/medications/mounjaro",
-   "retrieved_at": "2026-10-30T19:46:03+00:00",
-   "doses_found": 1,
-   "confidence": "medium"
+   "retrieved_at": "2026-11-08T19:01:24+00:00",
+   "doses_found": 6,
+   "confidence": "high",
+   "checks": 6
   },
   {
    "provider": "Fylde Clinic",
@@ -893,12 +917,18 @@
    "gphc": "9012559",
    "domain": "medicspot.co.uk",
    "prices_gbp": {
-    "2.5": 199.0
+    "2.5": 199.0,
+    "5": 219.0,
+    "7.5": 269.0,
+    "10": 289.0,
+    "12.5": 309.0,
+    "15": 329.0
    },
    "source_url": "https://www.medicspot.co.uk/weight-loss/injections/mounjaro-uk",
-   "retrieved_at": "2026-10-25T19:21:57+00:00",
-   "doses_found": 1,
-   "confidence": "medium"
+   "retrieved_at": "2026-11-08T19:01:28+00:00",
+   "doses_found": 6,
+   "confidence": "high",
+   "checks": 6
   },
   {
    "provider": "MSH Weight Loss",
@@ -998,7 +1028,7 @@
    "doses_found": 2,
    "confidence": "medium",
    "note": "dropped implausible dose(s): 5mg, 7.5mg, 10mg, 12.5mg",
-   "reason": "price fell as dose rose \u2014 one or more doses discarded"
+   "reason": "price fell as dose rose — one or more doses discarded"
   },
   {
    "provider": "Swift Medi",
@@ -1017,24 +1047,28 @@
    "gphc": "9012997",
    "domain": "totiva.co.uk",
    "prices_gbp": {
-    "2.5": 136.88
+    "2.5": 136.88,
+    "15": 298.97
    },
    "source_url": "https://www.totiva.co.uk/services/weight-loss/mounjaro",
-   "retrieved_at": "2026-10-25T19:23:24+00:00",
-   "doses_found": 1,
-   "confidence": "medium"
+   "retrieved_at": "2026-11-08T19:01:38+00:00",
+   "doses_found": 2,
+   "confidence": "medium",
+   "checks": 2
   },
   {
    "provider": "XO",
    "gphc": "",
    "domain": "xo-co.uk",
    "prices_gbp": {
-    "2.5": 149.0
+    "2.5": 149.0,
+    "15": 269.0
    },
    "source_url": "https://www.xo-co.uk/pages/mounjaro",
-   "retrieved_at": "2026-10-30T19:46:03+00:00",
-   "doses_found": 1,
-   "confidence": "medium"
+   "retrieved_at": "2026-11-08T19:01:38+00:00",
+   "doses_found": 2,
+   "confidence": "medium",
+   "checks": 2
   },
   {
    "provider": "YourDose",
@@ -1053,12 +1087,18 @@
    "gphc": "",
    "domain": "pharmacyplanet.com",
    "prices_gbp": {
-    "2.5": 99.0
+    "2.5": 99.0,
+    "5": 149.0,
+    "7.5": 175.0,
+    "10": 175.0,
+    "12.5": 209.0,
+    "15": 209.0
    },
    "source_url": "https://www.pharmacyplanet.com/mounjaro.html",
-   "retrieved_at": "2026-10-26T12:10:20+00:00",
-   "doses_found": 1,
-   "confidence": "medium"
+   "retrieved_at": "2026-11-08T19:01:40+00:00",
+   "doses_found": 6,
+   "confidence": "high",
+   "checks": 6
   }
  ],
  "unread": [

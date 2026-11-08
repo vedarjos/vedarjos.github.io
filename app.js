@@ -29,47 +29,60 @@ function easeFor(provider) {
   return { score, label, steps: o.steps, approval: o.approval_days };
 }
 
-function providersForDose(dose) {
-  const priced = (state.data?.providers ?? [])
-    .map((p) => ({ ...p, price: pricedOf(p, dose) }))
-    .filter((p) => p.price !== null);
-
-  if (!state.showUnread) return priced;
-
-  const pricedNames = new Set(priced.map((p) => p.provider));
-  const unread = (state.data?.unread ?? [])
-    .filter((u) => !pricedNames.has(u.provider))
-    .map((u) => ({ ...u, price: null, prices_gbp: {} }));
-  return priced.concat(unread);
-}
-
 function pricedOf(provider, dose) {
   const p = provider.prices_gbp?.[dose];
   return typeof p === 'number' ? p : null;
 }
 
-function sortedProviders(dose) {
-  const rows = providersForDose(dose);
-  const p = (r) => (r.price === null ? Number.POSITIVE_INFINITY : r.price);
+// Every listed pharmacy appears at every dose. Plenty of them publish only their
+// starting dose, so those rows carry missingDose:true and say which doses they do
+// list. Dropping them made the list shorter than the headline count and read as a
+// missing-pharmacy bug rather than a missing price.
+function doseBuckets(dose) {
+  const all = state.data?.providers ?? [];
+  const withPrice = all.map((p) => ({ ...p, price: pricedOf(p, dose) }));
+  return {
+    priced: withPrice.filter((p) => p.price !== null),
+    missing: withPrice
+      .filter((p) => p.price === null)
+      .map((p) => ({ ...p, missingDose: true })),
+  };
+}
+
+function sortPriced(rows) {
+  const p = (r) => r.price;
+  const copy = rows.slice();
   if (state.sort === 'ease') {
-    return rows.sort((a, b) => {
+    return copy.sort((a, b) => {
       const ea = easeFor(a.provider)?.score ?? -1;
       const eb = easeFor(b.provider)?.score ?? -1;
       return eb - ea || p(a) - p(b);
     });
   }
   if (state.sort === 'rating') {
-    return rows.sort((a, b) => {
+    return copy.sort((a, b) => {
       const ra = Number(state.ordering[a.provider]?.rating ?? -1);
       const rb = Number(state.ordering[b.provider]?.rating ?? -1);
       return rb - ra || p(a) - p(b);
     });
   }
-  return rows.sort((a, b) => {
+  return copy.sort((a, b) => {
     const diff = p(a) - p(b);
     if (Math.abs(diff) > 0.5) return diff;
     return (easeFor(b.provider)?.score ?? -1) - (easeFor(a.provider)?.score ?? -1);
   });
+}
+
+function sortedProviders(dose) {
+  const { priced, missing } = doseBuckets(dose);
+  const rows = sortPriced(priced).concat(missing);
+  if (!state.showUnread) return rows;
+
+  const seen = new Set(rows.map((r) => r.provider));
+  const unread = (state.data?.unread ?? [])
+    .filter((u) => !seen.has(u.provider))
+    .map((u) => ({ ...u, price: null, prices_gbp: {} }));
+  return rows.concat(unread);
 }
 
 function renderDoses() {
@@ -81,6 +94,7 @@ function renderDoses() {
       state.dose = btn.dataset.dose;
       renderDoses();
       renderLowest();
+      renderStats();
       renderList();
       afterRender();
       window.scrollTo({ top: $('#list-title').offsetTop - 90, behavior: 'smooth' });
@@ -108,7 +122,7 @@ function renderLowest() {
   $('#lowest-grid').querySelectorAll('.low-card[data-dose]').forEach((el) => {
     el.addEventListener('click', () => {
       state.dose = el.dataset.dose;
-      renderDoses(); renderLowest(); renderList(); afterRender();
+      renderDoses(); renderLowest(); renderStats(); renderList(); afterRender();
       window.scrollTo({ top: $('#list-title').offsetTop - 90, behavior: 'smooth' });
     });
   });
@@ -118,6 +132,7 @@ function card(provider, index) {
   const ease = easeFor(provider.provider);
   const o = state.ordering[provider.provider] ?? {};
   const isTop = index === 0;
+  const missing = Boolean(provider.missingDose);
   const easeClass = ease ? (ease.score >= 80 ? 'good' : ease.score >= 60 ? '' : 'hard') : '';
   const stepText = ease?.steps?.length
     ? ease.steps.map((k) => STEP_META[k]?.label ?? k).join(', ')
@@ -134,7 +149,8 @@ function card(provider, index) {
   }
   // no discount codes, no offers: special offers on POM prices may not be promoted
   if (o.delivery) badges.push(`<span class="badge delivery">${o.delivery}</span>`);
-  if (provider.price === null) badges.push('<span class="badge gated">No published price</span>');
+  if (missing) badges.push(`<span class="badge gated">No ${state.dose}mg price</span>`);
+  else if (provider.price === null) badges.push('<span class="badge gated">No published price</span>');
 
   const g = state.gphc[provider.provider];
   if (g?.verified) {
@@ -155,14 +171,24 @@ function card(provider, index) {
     if (why.includes('did not load')) return 'their site wouldn’t load for us';
     return 'no price found';
   })();
-  const priceBlock = provider.price === null
-    ? `<div class="card-price"><strong class="no-price">No price</strong><span>${unreadNote}</span></div>`
-    : `<div class="card-price"><strong>${gbp(provider.price)}</strong><span>${state.dose}mg</span></div>`;
+  const listed = Object.keys(provider.prices_gbp ?? {})
+    .sort((a, b) => DOSE_ORDER.indexOf(a) - DOSE_ORDER.indexOf(b));
+  const doseList = !listed.length
+    ? 'no dose published'
+    : listed.length === 1
+      ? `lists ${listed[0]}mg only`
+      : `lists ${listed.slice(0, -1).join(', ')}mg and ${listed[listed.length - 1]}mg`;
 
-  return `<article class="card${isTop ? ' top' : ''}${provider.price === null ? ' unread' : ''}" style="--i:${Math.min(index, 14)}">
+  const priceBlock = missing
+    ? `<div class="card-price"><strong class="no-price">No ${state.dose}mg</strong><span>${doseList}</span></div>`
+    : provider.price === null
+      ? `<div class="card-price"><strong class="no-price">No price</strong><span>${unreadNote}</span></div>`
+      : `<div class="card-price"><strong>${gbp(provider.price)}</strong><span>${state.dose}mg</span></div>`;
+
+  return `<article class="card${isTop ? ' top' : ''}${provider.price === null ? ' unread' : ''}${missing ? ' missing-dose' : ''}" style="--i:${Math.min(index, 14)}">
     <div class="card-head">
       <div style="display:flex;gap:8px;min-width:0">
-        <span class="rank">${index + 1}</span>
+        <span class="rank">${missing ? '—' : index + 1}</span>
         <div style="min-width:0">
           <h3 class="card-name">${provider.provider}</h3>
           ${stepText ? `<p class="steps"><b>Asks for:</b> ${stepText}</p>` : ''}
@@ -187,7 +213,13 @@ function pulseList() {
 }
 
 function renderList() {
+  const { priced, missing } = doseBuckets(state.dose);
+  const total = priced.length + missing.length;
   const rows = sortedProviders(state.dose);
+  const pricedRows = rows.filter((r) => r.price !== null);
+  const missingRows = rows.filter((r) => r.missingDose);
+  const unreadRows = rows.filter((r) => r.price === null && !r.missingDose);
+
   $('#list-title').textContent = `Every pharmacy, ranked — ${state.dose}mg`;
   $('#sort-note').textContent = state.sort === 'price'
     ? 'Lowest published price first — factual ordering, not a recommendation.'
@@ -195,14 +227,27 @@ function renderList() {
       ? 'Least hassle first, from what each pharmacy admits it asks for.'
       : 'Best customer rating first. Pharmacies with no rating sit at the bottom.';
 
-  if (!rows.length) {
+  const coverage = $('#coverage-line');
+  if (coverage) {
+    coverage.textContent = `All ${total} listed pharmacies appear below. ${priced.length} publish a ${state.dose}mg price`
+      + (missing.length ? `, ${missing.length} don’t.` : '.');
+  }
+
+  if (!pricedRows.length) {
     $('#list').innerHTML = '<p class="empty">' + HEART + 'Nothing published at this dose yet. That’s a gap in their pricing, not in the index — new pages are read every week.</p>';
     return;
   }
-  const unpriced = rows.filter((r) => r.price === null).length;
-  $('#list').innerHTML = rows.map(card).join('')
 
-    + (unpriced ? `<p class="fine list-foot">These ${unpriced} publish nothing until you finish their consultation. They’re here because you might already use one — a hidden price is not an expensive one.</p>` : '');
+  const gap = missingRows.length
+    ? `<div class="dose-gap">
+        <p class="dose-gap-title">${missingRows.length} of ${total} publish no ${state.dose}mg price</p>
+        <p class="fine">They stay on the list, with the doses they do price. A missing dose is their gap, not a better deal.</p>
+      </div>` + missingRows.map(card).join('')
+    : '';
+
+  $('#list').innerHTML = pricedRows.map(card).join('')
+    + gap
+    + (unreadRows.length ? `<p class="fine list-foot">These ${unreadRows.length} publish nothing until you finish their consultation. They’re here because you might already use one — a hidden price is not an expensive one.</p>` : '');
 }
 
 function afterRender() { pulseList(); }
@@ -212,9 +257,13 @@ function renderStats() {
   const withPrice = all.filter((p) => Object.keys(p.prices_gbp ?? {}).length);
   const doses = new Set();
   withPrice.forEach((p) => Object.keys(p.prices_gbp ?? {}).forEach((d) => doses.add(d)));
-  const gphcN = withPrice.filter((p) => state.gphc?.[p.provider]?.verified).length;
+  // The headline numbers follow the selected dose. A fixed "68" above a 48-row
+  // list reads as missing pharmacies; these now match what is actually priced.
+  const atDose = withPrice.filter((p) => pricedOf(p, state.dose) !== null);
+  const gphcN = atDose.filter((p) => state.gphc?.[p.provider]?.verified).length;
   const set = (sel, value) => { const el = $(sel); if (el) el.textContent = value; };
-  set('#stat-pharmacies', withPrice.length);
+  set('#stat-pharmacies', atDose.length);
+  set('#stat-pharmacies-label', `pharmacies · ${state.dose}mg`);
   set('#stat-doses', doses.size);
   set('#stat-gphc', gphcN || '—');
 

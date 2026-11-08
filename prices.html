@@ -12,7 +12,7 @@
 <title>Price list — registered pharmacies</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
-<link rel="stylesheet" href="styles.css?v=21">
+<link rel="stylesheet" href="styles.css?v=22">
 </head>
 <body>
 <div class="app">
@@ -27,7 +27,7 @@
     <p class="lede">What registered UK pharmacies publish for a private weight-management consultation, per pen. Factual figures, linked to the page each one came from.</p>
 
     <div class="hero-stats">
-      <div class="stat"><strong id="stat-pharmacies">—</strong><span>pharmacies</span></div>
+      <div class="stat"><strong id="stat-pharmacies">—</strong><span id="stat-pharmacies-label">pharmacies</span></div>
       <div class="stat"><strong id="stat-doses">—</strong><span>doses covered</span></div>
       <div class="stat"><strong id="stat-gphc">—</strong><span>GPhC-verified</span></div>
     </div>
@@ -48,6 +48,7 @@
       <button class="seg" data-sort="rating" role="tab">Rating</button>
     </div>
     <p class="sort-note" id="sort-note">Least hassle first, from what each pharmacy admits it asks for.</p>
+    <p class="sort-note" id="coverage-line"></p>
     <p class="sort-note evidence-note">Ease counts only what a pharmacy admits to. Hide your checks behind a consultation and you score well here by default — so read it as a floor, not a rating.</p>
     <button class="toggle" id="unread-toggle" type="button" aria-pressed="false">
       <span class="toggle-label">Show the ones that won’t tell you a price</span>
@@ -78,6 +79,6 @@
   </div>
 </div>
 
-<script src="app.js?v=19"></script>
+<script src="app.js?v=20"></script>
 </body>
 </html>
