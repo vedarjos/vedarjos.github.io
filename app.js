@@ -128,6 +128,19 @@ function renderLowest() {
   });
 }
 
+// A price can depend on a plan: Chequp quote a first-month rate that needs a
+// six-month subscription. The headline figure is the comparable one, and the
+// condition is stated where the price appears — not in a footnote the reader
+// has to hunt for, and not as a promotional flag (offers on POMs are not ours
+// to promote; the condition is a fact about the number).
+function condFor(provider) {
+  const note = provider.price_notes?.[state.dose];
+  if (!note) return null;
+  // the card shows the condition in one line; the full variant table sits in the
+  // tooltip so the row does not turn into a paragraph
+  return { short: note, detail: provider.price_notes_detail?.[state.dose] || '' };
+}
+
 function card(provider, index) {
   const ease = easeFor(provider.provider);
   const o = state.ordering[provider.provider] ?? {};
@@ -183,7 +196,8 @@ function card(provider, index) {
     ? `<div class="card-price"><strong class="no-price">No ${state.dose}mg</strong><span>${doseList}</span></div>`
     : provider.price === null
       ? `<div class="card-price"><strong class="no-price">No price</strong><span>${unreadNote}</span></div>`
-      : `<div class="card-price"><strong>${gbp(provider.price)}</strong><span>${state.dose}mg</span></div>`;
+      : `<div class="card-price"><strong>${gbp(provider.price)}${condFor(provider) ? '<span class="cond-mark">*</span>' : ''}</strong><span>${state.dose}mg</span></div>`;
+  const cond = condFor(provider);
 
   return `<article class="card${isTop ? ' top' : ''}${provider.price === null ? ' unread' : ''}${missing ? ' missing-dose' : ''}" style="--i:${Math.min(index, 14)}">
     <div class="card-head">
@@ -194,7 +208,10 @@ function card(provider, index) {
           ${stepText ? `<p class="steps"><b>Asks for:</b> ${stepText}</p>` : ''}
         </div>
       </div>
-      ${priceBlock}
+      <div class="price-col">
+        ${priceBlock}
+        ${cond ? `<em class="cond-note"${cond.detail ? ` title="${cond.detail.replace(/"/g, '&quot;')}"` : ''}><span class="cond-mark">*</span> ${cond.short}</em>` : ''}
+      </div>
     </div>
     <div class="badges">${badges.join('')}</div>
     <div class="card-foot">
