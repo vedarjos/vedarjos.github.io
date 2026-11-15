@@ -58,17 +58,18 @@
    "gphc": "9010308",
    "domain": "thecarepharmacy.com",
    "prices_gbp": {
-    "2.5": 125.0,
-    "5": 145.0,
-    "7.5": 175.0,
-    "10": 195.0,
-    "12.5": 210.0,
-    "15": 220.0
+    "2.5": 149.99,
+    "5": 184.99,
+    "7.5": 234.99,
+    "10": 259.99,
+    "12.5": 279.99,
+    "15": 299.99
    },
-   "source_url": "https://thecarepharmacy.com/mounjaro-price-comparison-uk",
-   "retrieved_at": "2026-10-25T19:23:12+00:00",
+   "source_url": "https://thecarepharmacy.com/shop/mounjaro-weight-loss-injection/",
+   "retrieved_at": "2026-11-15T19:33:18+00:00",
    "doses_found": 6,
-   "confidence": "high"
+   "confidence": "high",
+   "price_basis": "one-off single pen; subscription prices are £10/pen lower and are not used"
   },
   {
    "provider": "IQ Doctor",
