@@ -5,29 +5,20 @@ const DOSE_ORDER = ['2.5', '5', '7.5', '10', '12.5', '15'];
 
 const HEART = '<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-8.4-5.2-8.4-11A4.9 4.9 0 0 1 12 7.2 4.9 4.9 0 0 1 20.4 10c0 5.8-8.4 11-8.4 11z"/></svg>';
 
-const STEP_META = {
-  questionnaire: { label: 'online questionnaire', weight: 10 },
-  photo:         { label: 'photo upload', weight: 15 },
-  repeat_photo:  { label: 'repeat photos later', weight: 15 },
-  video:         { label: 'video consultation', weight: 20 },
-  id:            { label: 'ID upload', weight: 10 },
-  gp:            { label: 'GP / records check', weight: 10 },
-  slow:          { label: 'slow turnaround', weight: 5 },
+const STEP_LABEL = {
+  questionnaire: 'online questionnaire',
+  photo:         'photograph of you',
+  repeat_photo:  'repeated photographs',
+  video:         'video consultation',
+  id:            'photo ID',
+  gp:            'GP or medical records',
+  slow:          'stated longer approval time',
 };
 
-const state = { dose: '7.5', sort: 'ease', showUnread: false, data: null, ordering: {}, gphc: {} };
+const state = { dose: '7.5', sort: 'price', showUnread: false, data: null, ordering: {}, gphc: {} };
 
 const $ = (sel) => document.querySelector(sel);
 const gbp = (v) => '£' + Number(v).toFixed(2).replace(/\.00$/, '');
-
-function easeFor(provider) {
-  const o = state.ordering[provider];
-  if (!o || !Array.isArray(o.steps) || o.steps.length === 0) return null;
-  const penalty = o.steps.reduce((sum, key) => sum + (STEP_META[key]?.weight ?? 0), 0);
-  const score = Math.max(5, Math.min(100, 100 - penalty));
-  const label = score >= 80 ? 'Easy' : score >= 60 ? 'Moderate' : 'Heavy checks';
-  return { score, label, steps: o.steps, approval: o.approval_days };
-}
 
 function pricedOf(provider, dose) {
   const p = provider.prices_gbp?.[dose];
@@ -50,27 +41,16 @@ function doseBuckets(dose) {
 }
 
 function sortPriced(rows) {
-  const p = (r) => r.price;
   const copy = rows.slice();
-  if (state.sort === 'ease') {
-    return copy.sort((a, b) => {
-      const ea = easeFor(a.provider)?.score ?? -1;
-      const eb = easeFor(b.provider)?.score ?? -1;
-      return eb - ea || p(a) - p(b);
-    });
-  }
   if (state.sort === 'rating') {
     return copy.sort((a, b) => {
       const ra = Number(state.ordering[a.provider]?.rating ?? -1);
       const rb = Number(state.ordering[b.provider]?.rating ?? -1);
-      return rb - ra || p(a) - p(b);
+      return rb - ra || a.price - b.price;
     });
   }
-  return copy.sort((a, b) => {
-    const diff = p(a) - p(b);
-    if (Math.abs(diff) > 0.5) return diff;
-    return (easeFor(b.provider)?.score ?? -1) - (easeFor(a.provider)?.score ?? -1);
-  });
+  // ties broken alphabetically: two pharmacies at the same price are equal here
+  return copy.sort((a, b) => a.price - b.price || a.provider.localeCompare(b.provider));
 }
 
 function sortedProviders(dose) {
@@ -142,17 +122,13 @@ function condFor(provider) {
 }
 
 function card(provider, index) {
-  const ease = easeFor(provider.provider);
   const o = state.ordering[provider.provider] ?? {};
   const isTop = index === 0;
   const missing = Boolean(provider.missingDose);
-  const easeClass = ease ? (ease.score >= 80 ? 'good' : ease.score >= 60 ? '' : 'hard') : '';
-  const stepText = ease?.steps?.length
-    ? ease.steps.map((k) => STEP_META[k]?.label ?? k).join(', ')
-    : null;
+  const steps = Array.isArray(o.steps) ? o.steps : [];
+  const stepLabels = steps.map((k) => STEP_LABEL[k] ?? k);
 
   const badges = [];
-  if (ease) badges.push(`<span class="badge ease ${easeClass}">Ease ${ease.score}</span>`);
   if (o.rating) {
     const adv = o.advertised_rating;
     const note = adv
@@ -205,7 +181,12 @@ function card(provider, index) {
         <span class="rank">${missing ? '—' : index + 1}</span>
         <div style="min-width:0">
           <h3 class="card-name">${provider.provider}</h3>
-          ${stepText ? `<p class="steps"><b>Asks for:</b> ${stepText}</p>` : ''}
+          <div class="checks">
+            <span class="checks-label">Consultation process</span>
+            ${stepLabels.length
+              ? `<ul class="checks-list">${stepLabels.map((t) => `<li>${t}</li>`).join('')}</ul>`
+              : '<p class="checks-none">Not stated on the pages we read.</p>'}
+          </div>
         </div>
       </div>
       <div class="price-col">
@@ -214,9 +195,10 @@ function card(provider, index) {
       </div>
     </div>
     <div class="badges">${badges.join('')}</div>
+    ${provider.price !== null ? `<p class="includes">One ${state.dose}mg pen at the published price. ${o.delivery ? `Delivery stated: ${o.delivery}.` : 'Delivery not stated on their page.'}</p>` : ''}
     <div class="card-foot">
-      <span class="meta">${host}${provider.retrieved_at ? ' · read ' + provider.retrieved_at.slice(0, 10) : ''}</span>
-      ${provider.source_url ? `<a class="visit" href="${provider.source_url}" target="_blank" rel="noopener">Check live price</a>` : ''}
+      <span class="meta">${host}${provider.retrieved_at ? ' · checked ' + provider.retrieved_at.slice(0, 10) : ''}</span>
+      ${provider.source_url ? `<a class="visit" href="${provider.source_url}" target="_blank" rel="noopener">Source page</a>` : ''}
     </div>
   </article>`;
 }
@@ -237,12 +219,10 @@ function renderList() {
   const missingRows = rows.filter((r) => r.missingDose);
   const unreadRows = rows.filter((r) => r.price === null && !r.missingDose);
 
-  $('#list-title').textContent = `Every pharmacy, ranked — ${state.dose}mg`;
+  $('#list-title').textContent = `Every pharmacy, lowest published price first — ${state.dose}mg`;
   $('#sort-note').textContent = state.sort === 'price'
-    ? 'Lowest published price first — factual ordering, not a recommendation.'
-    : state.sort === 'ease'
-      ? 'Least hassle first, from what each pharmacy admits it asks for.'
-      : 'Best customer rating first. Pharmacies with no rating sit at the bottom.';
+    ? 'Lowest published price first. An ordering, not a recommendation.'
+    : 'Highest customer rating first. Pharmacies with no rating sit at the bottom.';
 
   const coverage = $('#coverage-line');
   if (coverage) {
@@ -284,14 +264,25 @@ function renderStats() {
   set('#stat-doses', doses.size);
   set('#stat-gphc', gphcN || '—');
 
-  const whenRaw = state.data?.generated_at?.slice(0, 10) ?? '';
-  const when = whenRaw
-    ? new Date(whenRaw + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-    : '';
+  const stamp = (d) => new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  // Dates come from the pages themselves, not from when the file was written:
+  // a pharmacy read five weeks ago must not be presented as checked today.
+  const dates = (state.data?.providers ?? []).map((p) => p.retrieved_at).filter(Boolean).map((t) => t.slice(0, 10)).sort();
+  const firstDate = dates[0] || '';
+  const lastDate = dates[dates.length - 1] || '';
+  const pillEl = document.querySelector('.live');
+  if (pillEl && lastDate) {
+    pillEl.innerHTML = '<span class="pulse"></span> ' + (firstDate === lastDate
+      ? `Last checked ${stamp(lastDate)}`
+      : `Checked ${stamp(firstDate)} – ${stamp(lastDate)}`);
+  }
+  const when = lastDate;
   const checkedEl = $('#checked-line');
   if (checkedEl) {
     if (when) {
-      checkedEl.innerHTML = HEART + `Read from ${withPrice.length} pharmacy pages on ${when} · every price links to its source`;
+      checkedEl.innerHTML = HEART + (firstDate && firstDate !== lastDate
+        ? `Read from ${withPrice.length} pharmacy pages between ${stamp(firstDate)} and ${stamp(lastDate)} · every price links to its source`
+        : `Read from ${withPrice.length} pharmacy pages on ${stamp(lastDate)} · every price links to its source`);
     } else {
       checkedEl.textContent = '';
     }

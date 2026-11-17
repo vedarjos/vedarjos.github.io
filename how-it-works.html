@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-store">
 <title>How GLPenFind works — where the numbers come from</title>
-<meta name="description" content="How GLPenFind reads prices, scores Ease, verifies pharmacies against the GPhC register, and what it refuses to do.">
+<meta name="description" content="How GLPenFind reads prices, records the consultation process, verifies pharmacies against the GPhC register, and what it refuses to do.">
 <meta name="theme-color" content="#a7d4e4">
 <link rel="icon" href="icon-192.png">
 <link rel="stylesheet" href="site.css?v=6">
@@ -54,22 +54,22 @@
 
   <div class="wrap">
     <section style="padding:64px 0">
-      <h2>Scoring Ease</h2>
-      <p class="sub">Ease is a penalty score. It starts at 100 and subtracts for each publicly stated step between you and a price:</p>
+      <h2>The consultation process, as stated</h2>
+      <p class="sub">Pharmacies differ in what they ask for before a prescriber decides. We record those steps as each pharmacy states them, and nothing more:</p>
       <table class="ease-table">
-        <thead><tr><th>Step</th><th>Points off</th></tr></thead>
+        <thead><tr><th>Step</th><th>How it appears</th></tr></thead>
         <tbody>
-          <tr><td>Online consultation or questionnaire</td><td>−10</td></tr>
-          <tr><td>Photograph of you, your ID, or the box</td><td>−15</td></tr>
-          <tr><td>Another photograph on refills</td><td>−15</td></tr>
-          <tr><td>Video or live verification call</td><td>−20</td></tr>
-          <tr><td>Government ID upload</td><td>−10</td></tr>
-          <tr><td>GP confirmation or letter</td><td>−10</td></tr>
-          <tr><td>Slow or manual approval</td><td>−5</td></tr>
+          <tr><td>Online consultation or questionnaire</td><td>Listed as stated</td></tr>
+          <tr><td>Photograph of you</td><td>Listed as stated</td></tr>
+          <tr><td>Repeated photographs on refills</td><td>Listed as stated</td></tr>
+          <tr><td>Video consultation</td><td>Listed as stated</td></tr>
+          <tr><td>Photo ID</td><td>Listed as stated</td></tr>
+          <tr><td>GP or medical records check</td><td>Listed as stated</td></tr>
+          <tr><td>Stated longer approval time</td><td>Listed as stated</td></tr>
         </tbody>
       </table>
-      <p class="sub" style="margin-top:20px">The floor is 5, so nothing scores zero by accident. A pharmacy whose process we can't read at all gets no score rather than a flattering one — an empty Ease figure is a statement in itself.</p>
-      <p class="sub">Ease describes friction, not quality of care. A high score is not a recommendation, and a low one is not a warning. It's a count of the hoops, written down so you can decide which hoops you're willing to jump through.</p>
+      <p class="sub" style="margin-top:20px">Nothing here is scored, weighted or ranked. Position in the list follows the published price, and ties are broken alphabetically. Where a pharmacy publishes nothing about its process, the entry says so rather than guessing.</p>
+      <p class="sub">These checks are not obstacles to compare — they are how a prescriber establishes whether a medicine is safe and appropriate for a particular person, which is a clinical decision and not one a price list can make.</p>
     </section>
   </div>
 

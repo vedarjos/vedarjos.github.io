@@ -735,3 +735,11 @@ h1 span {
 .cond-note .cond-mark{font-size:.9em;vertical-align:baseline}
 
 .price-col{display:flex;flex-direction:column;align-items:flex-end;gap:1px;max-width:46%;flex:0 0 auto}
+
+/* consultation process: a factual list, deliberately unweighted */
+.checks{margin:4px 0 0}
+.checks-label{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft,#5c452b);opacity:.75;margin-bottom:2px}
+.checks-list{display:flex;flex-wrap:wrap;gap:4px;margin:0;padding:0;list-style:none}
+.checks-list li{font-size:11.5px;line-height:1.3;padding:2px 7px;border-radius:999px;background:rgba(84,112,118,.12);color:var(--ink,#71502f);border:1px solid rgba(84,112,118,.22)}
+.checks-none{margin:0;font-size:11.5px;color:var(--ink-soft,#5c452b);opacity:.8}
+.includes{margin:8px 0 0;font-size:11px;line-height:1.4;color:var(--ink-soft,#5c452b);opacity:.85}
