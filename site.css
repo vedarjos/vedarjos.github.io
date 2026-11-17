@@ -142,14 +142,14 @@ section p:last-child { margin-bottom: 0; }
 
 /* ease table */
 
-.ease-table {
+.record-table {
   width: 100%; border-collapse: collapse; font-size: 15.5px;
   background: var(--plate); border-radius: 14px; overflow: hidden;
 }
-.ease-table th, .ease-table td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--rule); }
-.ease-table th { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--slate); font-weight: 600; }
-.ease-table tr:last-child td { border-bottom: 0; }
-.ease-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.record-table th, .record-table td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--rule); }
+.record-table th { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--slate); font-weight: 600; }
+.record-table tr:last-child td { border-bottom: 0; }
+.record-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
 
 /* screenshots */
 
